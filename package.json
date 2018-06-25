@@ -1,0 +1,23 @@
+{
+  "name": "discord-sport-bot",
+  "version": "1.0.0",
+  "description": "a discord bot for sport results and info",
+  "main": "index.js",
+  "dependencies": {
+    "discord-akairo": "^7.5.4",
+    "discord.js": "^11.3.2",
+    "mysql2": "^1.5.3",
+    "pg": "^7.4.3",
+    "sequelize": "^4.37.10",
+    "sequelize-cli": "^4.0.0",
+    "node-football-data": "https://github.com/c0dr/node-football-data/tarball/master"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node bot.js",
+    "setup_devdb": "node_modules/.bin/sequelize db:migrate --config=data/db.json",
+    "install": "node_modules/.bin/sequelize db:migrate --env=production --config=data/db.json"
+  },
+  "author": "Tobias Rös <tr@protoyou.de>",
+  "license": "GPL-3.0-or-later"
+}

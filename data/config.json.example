@@ -1,0 +1,14 @@
+{
+  "clientSecret": "GET FROM DISCORD APP",
+  "clientID": "GET FROM DISCORD APP",
+  "botToken": "GET FROM DISCORD USER",
+  "prefix": ">",
+  "fdo_key": "APIKEY-football-data_org",
+  "database": {
+    "type": "mysql",
+    "host": "localhost",
+    "user": "USERNAME",
+    "name": "DBNAME",
+    "password": "DBPASS"
+  }
+}
