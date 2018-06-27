@@ -19,7 +19,7 @@ class MatchInfoCommand extends Command {
 
     exec(message, args) {
         let channel = message.channel;
-        let params = [channel.id, args.status, args.timeFrame].filter((val) => { if (!!val){return true;} });
+        let params = [channel.id, args.status, args.timeFrame].filter((val) => { if (!!val || val === 0){return true;} });
         let client = this.client;
         client.messageGenerator
             .getMatchInfoMessages(...params)

@@ -25,7 +25,7 @@ class MessageGenerator {
      * @param matchStatus
      * @returns {Promise<any>} Resolve array of string messages
      */
-    getMatchInfoMessages(channelID, matchStatus="IN_PLAY", timeFrame=1){
+    getMatchInfoMessages(channelID, matchStatus="IN_PLAY", timeFrame=0){
         return new Promise((resolveMatchInfoMessages, rejectMatchInfoMessages) => {
             this._getMatches(channelID, matchStatus, timeFrame).then(function (competitionPromises) {
                 Promise.all(competitionPromises).then(competitionFixtures => {
@@ -144,7 +144,7 @@ class MessageGenerator {
      * @returns {Promise<any>} Resolve with Promise.all(retVal).then(x)
      * @private
      */
-    _getMatches(channelID, runningState="ALL", timeFrame=1){
+    _getMatches(channelID, runningState="ALL", timeFrame=0){
         let timeFrameObj = this.timeFrameToDate(timeFrame);
 
 
@@ -185,18 +185,16 @@ class MessageGenerator {
     }
 
     timeFrameToDate(timeFrame) {
-        let timeFrameRequest;
+        let timeFrameRequest = "n1";
         let requestedDate = new Date();
         if (!!timeFrame) {
             timeFrame = parseInt(timeFrame);//convert to INT
             if (timeFrame < 0) {
                 timeFrameRequest = "p" + (timeFrame * -1);
                 requestedDate.setDate(requestedDate.getDate() - (timeFrame * -1));
-            } else if (timeFrame > 1) { //1 = today therefore > 1
-                timeFrameRequest = "n" + timeFrame;
+            } else if (timeFrame > 0) {
+                timeFrameRequest = "n" + (timeFrame + 1);//1 = today therefore +1
                 requestedDate.setDate(requestedDate.getDate() + timeFrame);
-            } else {
-                timeFrameRequest = "n1"
             }
         }
         return {
