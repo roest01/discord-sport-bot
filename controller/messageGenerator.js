@@ -110,7 +110,7 @@ class MessageGenerator {
         let matchDate = new Date(fixture.date);
 
         let matchInfo = {
-            name: fixture.homeTeamName + " ( " + fixture.result.goalsAwayTeam + " ) vs " + fixture.awayTeamName + " ( " + fixture.result.goalsAwayTeam + " )",
+            name: fixture.homeTeamName + " ( " + fixture.result.goalsHomeTeam + " ) vs " + fixture.awayTeamName + " ( " + fixture.result.goalsAwayTeam + " )",
             value: fixture.status + " " + matchDate.toLocaleDateString('de-DE') + " " + matchDate.toLocaleTimeString('de-DE')
         };
         if (fixture.status === "TIMED") { //remove goals if not started
