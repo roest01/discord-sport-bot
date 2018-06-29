@@ -1,6 +1,6 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-    let NotificationLog = sequelize.define('NotificationLog', {
+    let NotificationLogs = sequelize.define('NotificationLogs', {
         serverId: {
             type: DataTypes.BIGINT(33),
             allowNull: true
@@ -9,9 +9,9 @@ module.exports = (sequelize, DataTypes) => {
         notificationText: DataTypes.TEXT,
         identHash: DataTypes.STRING(255)
     }, {});
-    NotificationLog.associate = function(models) {
-        models.NotificationLog.belongsTo(models.DiscordServer, {foreignKey: 'serverId', targetKey: 'id'});
+    NotificationLogs.associate = function(models) {
+        models.NotificationLogs.belongsTo(models.DiscordServer, {foreignKey: 'serverId', targetKey: 'id'});
     };
-    return NotificationLog;
+    return NotificationLogs;
 };
 
