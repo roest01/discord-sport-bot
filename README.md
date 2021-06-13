@@ -4,11 +4,17 @@ Get results of FIFA World Cup 2018 in Russia, FIFA World Cup 2022 in Katar or Ge
 ![provided access](https://raw.githubusercontent.com/roest01/discord-sport-bot/master/readme/access.png)
 
 ## Status
-This bot is in an verry early state. There are bugs active development and pending features!
+This bot is in an early state. There are bugs active development and pending features!
 Anyway you can start using it within my production server.
 
 https://discordapp.com/oauth2/authorize?client_id=457154004246462475&permissions=0&scope=bot
 
+
+## Data provided by
+https://www.football-data.org
+
+RESTful. Reliable. Free to use. Easy to integrate. Football API.
+You can buy you football data access there to get more detailed data for matches.
 
 ## How to use
 
