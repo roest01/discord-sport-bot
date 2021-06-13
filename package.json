@@ -5,13 +5,13 @@
   "repository": "https://github.com/roest01/discord-sport-bot/",
   "main": "index.js",
   "dependencies": {
-    "discord-akairo": "^7.5.4",
-    "discord.js": "^11.3.2",
-    "mysql2": "^1.5.3",
-    "pg": "^7.4.3",
+    "discord-akairo": "^8.1.0",
+    "discord.js": "^12.5.3",
+    "mysql2": "^2.2.5",
     "sequelize": "^4.37.10",
     "sequelize-cli": "^4.0.0",
-    "node-football-data": "^0.1.4"
+    "dateformat": "^4.5.1",
+    "node-football-api": "NekCS/football-data-nodejs-lib"
   },
   "devDependencies": {},
   "scripts": {

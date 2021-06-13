@@ -3,7 +3,13 @@ const { Command } = require('discord-akairo');
 class TodayCommand extends Command {
     constructor() {
         super('today', {
-            aliases: ['today']
+            aliases: ['today'],
+            args: [
+                {
+                    id: 'timeFrame',
+                    type: 'string'
+                }
+            ],
         });
     }
 
@@ -11,7 +17,7 @@ class TodayCommand extends Command {
         let channel = message.channel;
         message.delete();
         this.client.messageGenerator
-            .getTodayMessages(channel.id)
+            .getTodayMessages(channel.id, args.timeFrame)
             .then(function(messages){
                 messages.forEach(message => {
                     channel.send(message);

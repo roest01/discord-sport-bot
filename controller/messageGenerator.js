@@ -1,3 +1,5 @@
+let dateFormat = require("dateformat");
+
 class MessageGenerator {
     constructor(guild) {
         this.client = guild.client;
@@ -11,7 +13,7 @@ class MessageGenerator {
                 resolveMatchMessages({
                     embed: {
                         color: 2067276,
-                        fields: [MessageGenerator._getMessageFieldFromFixture(fixture)]
+                        fields: [this._getMessageFieldFromFixture(fixture)]
                     }
                 });
             });
@@ -26,6 +28,7 @@ class MessageGenerator {
      * @returns {Promise<any>} Resolve array of string messages
      */
     getMatchInfoMessages(channelID, matchStatus="IN_PLAY", timeFrame=0){
+        let messageGenerator = this;
         return new Promise((resolveMatchInfoMessages, rejectMatchInfoMessages) => {
             this._getMatches(channelID, matchStatus, timeFrame).then(function (competitionPromises) {
                 Promise.all(competitionPromises).then(competitionFixtures => {
@@ -34,15 +37,17 @@ class MessageGenerator {
                         let competition = response.competition;
                         let messageFields = [];
                         response.fixtures.forEach(function (fixture) {
-                            messageFields.push(MessageGenerator._getMessageFieldFromFixture(fixture))
+                            messageFields.push(messageGenerator._getMessageFieldFromFixture(fixture))
                         });
 
                         if (messageFields.length > 0) {
+                            let dateFilter = messageGenerator.timeFrameToDate(timeFrame);
+
                             messages.push({
                                 embed: {
                                     color: 3447003,
-                                    title: "_" + competition.caption + "_",
-                                    description: "Matchday: __" + competition.currentMatchday + "/" + competition.numberOfMatchdays + "__",
+                                    title: competition.name,
+                                    description: dateFormat(new Date(dateFilter.dateFrom), messageGenerator.client.settings.dateFormat),
                                     fields: messageFields
                                 }
                             });
@@ -61,40 +66,44 @@ class MessageGenerator {
         });
     };
 
-    getListMessage(season){
+    getListMessage(tier){
         return new Promise((resolve, reject) => {
             let api = this.client.fdo.api;
-            let prefix = this.client.akairoOptions.prefix;
-            if (!season) { season = (new Date()).getFullYear() }
+            let prefix = this.client.settings.prefix;
+            if (!tier) { tier = "TIER_ONE" }
 
-            api.getCompetitions(season).then(function (res) {
+            api.getCompetitions({
+                plan: tier
+            }).then(function (res) {
                 let competitions = "";
-                res.forEach(function(item){
-                    competitions += item.caption + " " + "(`" + prefix + "add " + item.id + "`)" + "\n";
+                res.competitions.forEach(function(item){
+                    competitions += item.name + " " + "(`" + prefix + "add " + item.id + "`)" + "\n";
                 });
                 resolve(competitions)
             }).catch(reject);
         });
     }
 
-    getTodayMessages(channelID){
+    getTodayMessages(channelID, timeFrame= 0){
         let messageGenerator = this;
         return new Promise((resolveTodayMessages, rejectTodayMessages) => {
-            this._getMatches(channelID).then(function(competitionPromises){
+            this._getMatches(channelID, "ALL", timeFrame).then(function(competitionPromises){
                 Promise.all(competitionPromises).then(competitionFixtures => {
                     let messages = []; //multiple messages allowed
                     competitionFixtures.forEach(response => {
                         let competition = response.competition;
                         let messageFields = [];
                         response.fixtures.forEach(function(fixture){
-                            messageFields.push(MessageGenerator._getMessageFieldFromFixture(fixture))
+                            messageFields.push(messageGenerator._getMessageFieldFromFixture(fixture))
                         });
 
                         if (messageFields.length > 0){
+                            let dateFilter = messageGenerator.timeFrameToDate(timeFrame);
+
                             messages.push({embed: {
                                     color: 3447003,
-                                    title: "_" + competition.caption + "_",
-                                    description: "Matchday: __"+competition.currentMatchday + "/" + competition.numberOfMatchdays+"__",
+                                    title: competition.name,
+                                    description: dateFormat(new Date(dateFilter.dateFrom), messageGenerator.client.settings.dateFormat),
                                     fields: messageFields
                                 }
                             });
@@ -106,15 +115,16 @@ class MessageGenerator {
         });
     }
 
-    static _getMessageFieldFromFixture(fixture) {
-        let matchDate = new Date(fixture.date);
+    _getMessageFieldFromFixture(match) {
+        let matchDate = new Date(match.utcDate);
+
 
         let matchInfo = {
-            name: fixture.homeTeamName + " ( " + fixture.result.goalsHomeTeam + " ) vs " + fixture.awayTeamName + " ( " + fixture.result.goalsAwayTeam + " )",
-            value: fixture.status + " " + matchDate.toLocaleDateString('de-DE') + " " + matchDate.toLocaleTimeString('de-DE')
+            name: match.homeTeam.name + " ( " + match.score.fullTime.homeTeam + " ) vs " + match.awayTeam.name + " ( " + match.score.fullTime.awayTeam + " )",
+            value: match.status + " - " + dateFormat(matchDate, this.client.settings.timeFormat) + "\n" + match.id
         };
-        if (fixture.status === "TIMED") { //remove goals if not started
-            matchInfo.name = fixture.homeTeamName + " vs " + fixture.awayTeamName;
+        if (match.status === "SCHEDULED") { //remove goals if not started
+            matchInfo.name = match.homeTeam.name + " vs " + match.awayTeam.name;
         }
         return matchInfo;
     }
@@ -129,8 +139,9 @@ class MessageGenerator {
             let api = this.client.fdo.api;
 
             if (!!matchID){
-                api.getFixture(matchID).then((response) => {
-                    resolveGetMatch(response.fixture);
+                api.getMatch(matchID).then((response) => {
+                    console.log(response);
+                    resolveGetMatch(response.match);
                 }).catch(rejectGetMatch);
             }
         });
@@ -144,7 +155,7 @@ class MessageGenerator {
      * @returns {Promise<any>} Resolve with Promise.all(retVal).then(x)
      * @private
      */
-    _getMatches(channelID, runningState="ALL", timeFrame=0){
+    _getMatches(channelID, runningState="ALL", timeFrame= 0){
         let timeFrameObj = this.timeFrameToDate(timeFrame);
 
 
@@ -157,18 +168,14 @@ class MessageGenerator {
                 watchers.forEach(function(watcher){
                     promiseStack.push(new Promise((resolveWatcher, rejectWatcher) => {
                         api.getCompetition(watcher.league).then(function(competition){
-                            api.getLeagueFixturesInTimeFrame(competition.id, timeFrameObj.timeFrameRequest
+                            api.getCompetitionMatches(competition.id, timeFrameObj
                             ).then(function(result){
                                 let retFixtures = [];
-                                result.fixtures.forEach(function(fixture){
-                                    let fixtureDate = new Date(fixture.date);
-
+                                result.matches.forEach(function(match){
                                     if (
-                                        (runningState === "ALL" || runningState === fixture.status)
-                                        &&
-                                        (timeFrameObj.requestedDate.toDateString() === fixtureDate.toDateString())
+                                        (runningState === "ALL" || runningState === match.status)
                                     ){
-                                        retFixtures.push(fixture);
+                                        retFixtures.push(match);
                                     }
                                 });
                                 resolveWatcher({
@@ -185,21 +192,36 @@ class MessageGenerator {
     }
 
     timeFrameToDate(timeFrame) {
-        let timeFrameRequest = "n1";
-        let requestedDate = new Date();
-        if (!!timeFrame) {
-            timeFrame = parseInt(timeFrame);//convert to INT
-            if (timeFrame < 0) {
-                timeFrameRequest = "p" + (timeFrame * -1);
-                requestedDate.setDate(requestedDate.getDate() - (timeFrame * -1));
-            } else if (timeFrame > 0) {
-                timeFrameRequest = "n" + (timeFrame + 1);//1 = today therefore +1
-                requestedDate.setDate(requestedDate.getDate() + timeFrame);
-            }
+        let today = new Date();
+
+        if (!timeFrame){ timeFrame = 0; }
+
+        console.log(timeFrame);
+
+        let date = today;
+        if (timeFrame.toString().startsWith("+")){
+            let tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + parseInt(timeFrame.replace('+', '')));
+            date = tomorrow;
+        } else if (timeFrame.toString().startsWith("-"))  {
+            let today = new Date();
+            let yesterday = new Date(today);
+            console.log(timeFrame, "<---");
+            yesterday.setDate(yesterday.getDate() - parseInt(timeFrame.toString().replace('-', '')));
+            date = yesterday;
         }
+
+
+        //date format is required by api
+        let year = date.toLocaleString("en-GB", {year: 'numeric'});
+        let month = date.toLocaleString("en-GB", {month: '2-digit'});
+        let day = date.toLocaleString("en-GB", {day:'2-digit'});
+        let filterDate = year + "-" + month + "-" + day;
+
+
         return {
-            timeFrameRequest: timeFrameRequest,
-            requestedDate: requestedDate
+            dateFrom: filterDate,
+            dateTo: filterDate
         };
     }
 }

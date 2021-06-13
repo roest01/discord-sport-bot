@@ -26,9 +26,9 @@ class AddCommand extends Command {
                     .addWatcherForServer(args.leagueID, message.channel, apiIdent)
                     .then(function (created) {
                         if (created){
-                            message.channel.send('Okay, will start to send updates within `'+competition.caption+'` into channel');
+                            message.channel.send('Okay, will start to send updates within `'+competition.name+'` into channel');
                         } else {
-                            message.channel.send('There is already a watcher for `'+competition.caption+'` in this channel');
+                            message.channel.send('There is already a watcher for `'+competition.name+'` in this channel');
                         }
                     });
             }).catch(function(){

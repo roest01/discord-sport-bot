@@ -31,7 +31,7 @@ class MatchInfoCommand extends Command {
                     });
                 } else {
                     let dateInfo = client.messageGenerator.timeFrameToDate(response.info.timeFrame);
-                    channel.send('Sorry no result found for `'+response.info.status+"` at `"+dateInfo.requestedDate.toLocaleDateString('de-DE')+"` \n Try to use `>matchInfo [TIMED, FINISHED]`");
+                    channel.send('Sorry no result found for `'+response.info.status+"` at `"+dateInfo.dateFrom+"` \n Try to use `>matchInfo [TIMED, FINISHED]`");
                 }
             }).catch(reason => {
                 console.error(reason);

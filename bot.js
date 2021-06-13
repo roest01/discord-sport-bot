@@ -1,4 +1,4 @@
-const { AkairoClient } = require('discord-akairo');
+const { AkairoClient, CommandHandler } = require('discord-akairo');
 const { Database } = require('./controller/database');
 const { StorageWorker } = require('./controller/storageWorker');
 const { MessageGenerator } = require('./controller/messageGenerator');
@@ -19,12 +19,22 @@ class Bot {
     init(){
         let bot = this;
         bot.client = new AkairoClient({
-            prefix: bot.settings.prefix,
-            commandDirectory: './commands/'
         }, {
             disableEveryone: true
         });
 
+        bot.client.login(bot.settings.botToken);
+
+        this.commandHandler = new CommandHandler(bot.client, {
+            directory: './commands/',
+            prefix: this.settings.prefix
+        });
+
+        this.commandHandler.loadAll();
+
+        console.log("loadet commands");
+
+        bot.client.settings = this.settings;
         bot.client.fdo = new FootballDataOrg();
 
         new Database(bot.settings.database).then(function(db){
@@ -37,10 +47,20 @@ class Bot {
                 bot.client.login(bot.settings.botToken).then(() => {
                     console.log('Started up!');
                     bot.client.generateInvite().then(link => {
-                        console.info(link);
+                        console.info("Prefix: " + bot.settings.prefix,link);
                     });
                 });
             });
+        });
+    }
+}
+
+
+class SportBot extends AkairoClient {
+    constructor() {
+        super({
+        }, {
+            disableMentions: 'everyone'
         });
     }
 }
