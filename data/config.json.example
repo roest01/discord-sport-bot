@@ -4,6 +4,9 @@
   "botToken": "GET FROM DISCORD USER",
   "prefix": ">",
   "fdo_key": "APIKEY-football-data_org",
+  "timeFormat": "HH:MM",
+  "dateFormat": "dd.mm.yyyy",
+  "dateTimeFormat": "dd.mm.yyyy - HH:MM",
   "database": {
     "type": "mysql",
     "host": "localhost",
