@@ -165,6 +165,7 @@ class MessageGenerator {
         return new Promise((resolveTeamMessages, rejectTeamMessages) => {
             let api = this.client.fdo.api;
 
+
            api.getTeam(teamID).then((team) => {
                let fields = [];
                let matchEmbedJSON = {
@@ -172,13 +173,15 @@ class MessageGenerator {
                        title: team.name + " / " + team.tla,
                        description: "Foundet in " + team.founded + " this " + team.clubColors + " team home base is the " + team.venue,
                        color: 2067276,
-                       fields: fields,
-                       "footer": {
-                           "text": "matches of team: `matches`"
-                       }
+                       fields: fields
                    }
                };
 
+               /*api.getTeamMatches(teamID).then((response) => {
+                   response.matches.forEach((match) => {
+                       fields.push(messageGenerator._getMessageFieldFromFixture(match));
+                   });
+               });*/
 
                fields.push({
                    "name": "Team is active in these competitions",
