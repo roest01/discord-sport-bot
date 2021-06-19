@@ -89,11 +89,53 @@ class MessageGenerator {
                     }
                 }
 
+                if (!!match.goals) {
+                    fields.push({
+                        name: "⠀",
+                        value: "**__Tore__**"
+                    });
 
-                /*fields.push({
-                    name: "REFEREES",
-                    "value": "\n⠀\n"
-                });*/
+                    match.goals.forEach((goal) => {
+                        let assist = "";
+                        if (!!goal.assist){
+                            assist = " nach Vorbereitung durch " + goal.assist.name;
+                        }
+
+                        let type = (goal.type === "OWN" ? "Eigentor" : "Tor");
+
+                        fields.push({
+                            name: "Minute " + goal.minute + " - " + goal.team.name,
+                            value: type + " durch " + goal.scorer.name + " für " + goal.team.name + assist
+                        });
+                    });
+                }
+
+                if (!!match.bookings) {
+                    fields.push({
+                        name: "⠀",
+                        value: "**__Karten__**"
+                    });
+
+                    match.bookings.forEach((booking) => {
+                        let assist = "";
+                        if (!!booking.assist){
+                            assist = " nach Vorbereitung durch " + booking.assist.name;
+                        }
+
+                        let type = (booking.card === "YELLOW_CARD" ? "Gelbe Karte" : booking.card);
+
+                        fields.push({
+                            name: "Minute " + booking.minute + " - " + booking.team.name,
+                            value: type + " für " + booking.player.name
+                        });
+                    });
+                }
+
+
+                fields.push({
+                    name: "⠀",
+                    value: "**__Schiedsrichter__**"
+                });
 
                 match.referees.forEach(function (referee) {
                     fields.push({
@@ -110,8 +152,8 @@ class MessageGenerator {
                 });
 
                 fields.push({
-                    "name": "LineUp",
-                    "value": "`" + messageGenerator.client.settings.prefix + "lineup " + match.id + "`\n"
+                    "name": "Details",
+                    "value": "`" + messageGenerator.client.settings.prefix + "lineup " + match.id + "`\n `" + messageGenerator.client.settings.prefix + "goals " + match.id + "`\n"
                 });
 
 
@@ -120,14 +162,54 @@ class MessageGenerator {
         });
     };
 
+    getGoalsMessage(matchID) {
+        let messageGenerator = this;
+
+        return new Promise((resolveGoalsMessages, rejectGoalsMessages) => {
+            this._getMatchData(matchID).then((response) => {
+                let match = response.match;
+                let fields = [
+                    messageGenerator._getMessageFieldFromFixture(match)
+                ];
+                let GoalEmbedJSON = {
+                    embed: {
+                        color: 2067276,
+                        fields: fields
+                    }
+                };
+
+                if (!!match.goals) {
+                    fields.push({
+                        name: "⠀",
+                        value: "**__Tore im Spiel__**"
+                    });
+
+                    match.goals.forEach((goal) => {
+                        let assist = "";
+                        if (!!goal.assist){
+                            assist = " nach Vorbereitung durch " + goal.assist.name;
+                        }
+
+                        let type = (goal.type === "OWN" ? "Eigentor" : "Tor");
+
+                        fields.push({
+                            name: "MINUTE " + goal.minute,
+                            value: type + " durch " + goal.scorer.name + " für " + goal.team.name + assist
+                        });
+                    });
+                }
+
+                resolveGoalsMessages(GoalEmbedJSON);
+            });
+        });
+    }
+
     getLineUpMessage(matchID){
         let messageGenerator = this;
 
         return new Promise((resolveLineUpMessages, rejectLineUpMessages) => {
             this._getMatchData(matchID).then((response) => {
                 let match = response.match;
-                let homeTeam = response.homeTeam;
-                let awayTeam = response.awayTeam;
                 let fields = [
                     messageGenerator._getMessageFieldFromFixture(match)
                 ];
