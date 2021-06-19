@@ -52,7 +52,7 @@ class MessageGenerator {
 
                 if (!!match.score.fullTime.homeTeam) {
                     fields.push({
-                        name: "FullTime result",
+                        name: match.status === "FINISHED" ? "FulTime result" : "Current result",
                         value: match.homeTeam.name + " ( " + match.score.fullTime.homeTeam + " ) vs " + match.awayTeam.name + " ( " + match.score.fullTime.awayTeam + " )",
                     })
                 }
