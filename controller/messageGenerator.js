@@ -89,50 +89,6 @@ class MessageGenerator {
                     }
                 }
 
-                if (!!match.homeTeam.lineup) {
-                    fields.push({
-                        name: "LINEUP",
-                        value: match.homeTeam.name
-                    });
-
-                    if (!!match.homeTeam.captain) {
-                        fields.push({
-                            name: "Coach",
-                            value: match.homeTeam.coach.name
-                        });
-                    }
-
-                    match.homeTeam.lineup.forEach(function (player) {
-                        fields.push({
-                            name: player.name,
-                            value: player.position + " | Nr: " + player.shirtNumber,
-                            inline: true
-                        });
-                    });
-                }
-
-                if (!!match.awayTeam.lineup) {
-                    fields.push({
-                        name: "LINEUP",
-                        value: match.awayTeam.name
-                    });
-
-                    if (!!match.awayTeam.captain) {
-                        fields.push({
-                            name: "Coach",
-                            value: match.awayTeam.coach.name
-                        });
-                    }
-
-                    match.awayTeam.lineup.forEach(function (player) {
-                        fields.push({
-                            name: player.name,
-                            value: player.position + " | Nr: " + player.shirtNumber,
-                            inline: true
-                        });
-                    });
-                }
-
 
                 /*fields.push({
                     name: "REFEREES",
@@ -158,6 +114,82 @@ class MessageGenerator {
             });
         });
     };
+
+    getLineUpMessage(matchID){
+        let messageGenerator = this;
+
+        return new Promise((resolveLineUpMessages, rejectLineUpMessages) => {
+            this._getMatchData(matchID).then((response) => {
+                let match = response.match;
+                let homeTeam = response.homeTeam;
+                let awayTeam = response.awayTeam;
+                let fields = [
+                    messageGenerator._getMessageFieldFromFixture(match)
+                ];
+                let lineUpEmbedJSON = {
+                    embed: {
+                        color: 2067276,
+                        fields: fields
+                    }
+                };
+
+                if (!!match.homeTeam.lineup) {
+                    fields.push({
+                        name: "⠀",
+                        value: "⠀"
+                    });
+
+                    fields.push({
+                        name: "LINEUP " + match.homeTeam.name,
+                        value: "⠀"
+                    });
+
+                    if (!!match.homeTeam.captain) {
+                        fields.push({
+                            name: "Coach",
+                            value: match.homeTeam.coach.name
+                        });
+                    }
+
+                    match.homeTeam.lineup.forEach(function (player) {
+                        fields.push({
+                            name: player.name,
+                            value: player.position + " | Nr: " + player.shirtNumber,
+                            inline: true
+                        });
+                    });
+                }
+
+                if (!!match.awayTeam.lineup) {
+                    fields.push({
+                        name: "⠀",
+                        value: "⠀"
+                    });
+
+                    fields.push({
+                        name: "LINEUP " + match.awayTeam.name,
+                        value: "⠀"
+                    });
+
+                    if (!!match.awayTeam.captain) {
+                        fields.push({
+                            name: "Coach",
+                            value: match.awayTeam.coach.name
+                        });
+                    }
+
+                    match.awayTeam.lineup.forEach(function (player) {
+                        fields.push({
+                            name: player.name,
+                            value: player.position + " | Nr: " + player.shirtNumber,
+                            inline: true
+                        });
+                    });
+                }
+                resolveLineUpMessages(lineUpEmbedJSON);
+            });
+        });
+    }
 
 
     getTeamMessage(teamID) {
