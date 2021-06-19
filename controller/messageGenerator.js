@@ -109,6 +109,11 @@ class MessageGenerator {
                     "value": match.homeTeam.name + ": `" + messageGenerator.client.settings.prefix + "team " + match.homeTeam.id + "`\n" + match.awayTeam.name + ": `" + messageGenerator.client.settings.prefix + "team " + match.awayTeam.id + "`\n"
                 });
 
+                fields.push({
+                    "name": "LineUp",
+                    "value": "`" + messageGenerator.client.settings.prefix + "lineup " + match.id + "`\n"
+                });
+
 
                 resolveMatchMessages(matchEmbedJSON);
             });
