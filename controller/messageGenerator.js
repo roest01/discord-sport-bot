@@ -89,7 +89,7 @@ class MessageGenerator {
                     }
                 }
 
-                if (!!match.goals) {
+                if (!!match.goals && match.goals.length > 0) {
                     fields.push({
                         name: "⠀",
                         value: "**__Tore__**"
@@ -110,7 +110,7 @@ class MessageGenerator {
                     });
                 }
 
-                if (!!match.bookings) {
+                if (!!match.bookings && match.goals.length > 0) {
                     fields.push({
                         name: "⠀",
                         value: "**__Karten__**"
