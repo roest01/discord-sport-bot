@@ -220,6 +220,18 @@ class MessageGenerator {
                     }
                 };
 
+
+
+                let lineUpKnownHome = "⠀";
+                if (match.homeTeam.lineup.length === 0){
+                    lineUpKnownHome = "LineUp not published yet"
+                }
+
+                let lineUpKnownAway = "⠀";
+                if (match.awayTeam.lineup.length === 0){
+                    lineUpKnownAway = "LineUp not published yet"
+                }
+
                 if (!!match.homeTeam.lineup) {
                     fields.push({
                         name: "⠀",
@@ -228,23 +240,25 @@ class MessageGenerator {
 
                     fields.push({
                         name: "LINEUP " + match.homeTeam.name,
-                        value: "⠀"
+                        value: lineUpKnownHome
                     });
 
-                    if (!!match.homeTeam.captain) {
+                    if (!!match.homeTeam.captain && !!match.homeTeam.captain.name) {
                         fields.push({
                             name: "Coach",
                             value: match.homeTeam.coach.name
                         });
                     }
 
-                    match.homeTeam.lineup.forEach(function (player) {
-                        fields.push({
-                            name: player.name,
-                            value: player.position + " | Nr: " + player.shirtNumber,
-                            inline: true
+                    if (match.homeTeam.lineup.length > 0){
+                        match.homeTeam.lineup.forEach(function (player) {
+                            fields.push({
+                                name: player.name,
+                                value: player.position + " | Nr: " + player.shirtNumber,
+                                inline: true
+                            });
                         });
-                    });
+                    }
                 }
 
                 if (!!match.awayTeam.lineup) {
@@ -255,23 +269,25 @@ class MessageGenerator {
 
                     fields.push({
                         name: "LINEUP " + match.awayTeam.name,
-                        value: "⠀"
+                        value: lineUpKnownAway
                     });
 
-                    if (!!match.awayTeam.captain) {
+                    if (!!match.awayTeam.captain && !!match.awayTeam.captain.name) {
                         fields.push({
                             name: "Coach",
                             value: match.awayTeam.coach.name
                         });
                     }
 
-                    match.awayTeam.lineup.forEach(function (player) {
-                        fields.push({
-                            name: player.name,
-                            value: player.position + " | Nr: " + player.shirtNumber,
-                            inline: true
+                    if (match.awayTeam.lineup.length > 0){
+                        match.awayTeam.lineup.forEach(function (player) {
+                            fields.push({
+                                name: player.name,
+                                value: player.position + " | Nr: " + player.shirtNumber,
+                                inline: true
+                            });
                         });
-                    });
+                    }
                 }
                 resolveLineUpMessages(lineUpEmbedJSON);
             });
