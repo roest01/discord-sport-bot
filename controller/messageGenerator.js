@@ -589,7 +589,7 @@ class MessageGenerator {
      */
     formatDate(date, format) {
         format = format || this.client.settings.dateFormat;
-        return dateFormat(date.toLocaleString(this.client.settings.timezonelang, {timeZone: this.client.settings.timezone}), format)
+        return dateFormat(date.toLocaleString("en-US", {timeZone: this.client.settings.timezone}), format)
     }
 }
 

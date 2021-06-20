@@ -8,7 +8,6 @@
   "dateFormat": "dd.mm.yyyy",
   "dateTimeFormat": "dd.mm.yyyy - HH:MM",
   "timezone": "europe/berlin",
-  "timezonelang": "de-DE",
   "database": {
     "type": "mysql",
     "host": "localhost",
