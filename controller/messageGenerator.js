@@ -456,15 +456,34 @@ class MessageGenerator {
         let messageGenerator = this;
         return new Promise((resolveTodayMessages, rejectTodayMessages) => {
             this._getMatches(channelID, "ALL", timeFrame).then(function (competitionPromises) {
+                console.log(competitionPromises.length);
                 Promise.all(competitionPromises).then(competitionFixtures => {
                     let messages = []; //multiple messages allowed
                     competitionFixtures.forEach(response => {
                         let competition = response.competition;
                         let messageFields = [];
-                        response.fixtures.forEach(function (fixture) {
-                            let singleGame = messageGenerator._getMessageFieldFromFixture(fixture);
-                            singleGame.value += "`Details: " + messageGenerator.client.settings.prefix + "match " + fixture.id + "`\n\n"
-                            messageFields.push(singleGame);
+                        if (response.fixtures.length > 0) {
+                            response.fixtures.forEach(function (fixture) {
+                                let singleGame = messageGenerator._getMessageFieldFromFixture(fixture);
+                                singleGame.value += "`Details: " + messageGenerator.client.settings.prefix + "match " + fixture.id + "`\n\n"
+                                messageFields.push(singleGame);
+                            });
+                        } else {
+                            messageFields.push({
+                                name: 'Keine Spiele',
+                                value: "Bitte versuche ein anderes Datum"
+                            });
+                        }
+
+
+                        messageFields.push({
+                            "name": "Gestern",
+                            "value": "`" + messageGenerator.client.settings.prefix + "today -1" + "`\n"
+                        });
+
+                        messageFields.push({
+                            "name": "Morgen",
+                            "value": "`" + messageGenerator.client.settings.prefix + "today +1" + "`\n"
                         });
 
                         if (messageFields.length > 0) {
