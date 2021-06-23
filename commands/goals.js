@@ -18,7 +18,6 @@ class GoalsCommand extends Command {
 
     exec(message, args) {
         let channel = message.channel;
-        message.delete();
         this.client.messageGenerator
             .getGoalsMessage(args.matchID)
             .then(function(message){

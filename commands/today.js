@@ -15,7 +15,6 @@ class TodayCommand extends Command {
 
     exec(message, args) {
         let channel = message.channel;
-        message.delete();
         this.client.messageGenerator
             .getTodayMessages(channel.id, args.timeFrame)
             .then(function(messages){

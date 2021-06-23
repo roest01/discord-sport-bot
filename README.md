@@ -62,5 +62,3 @@ PR are welcome.
 Forks are welcome.  
 Republished (public) docker images are **unwanted**  
 
-## Good2Know
-The bot deletes trigger messages aka `>today` if he has "manage messages" permission

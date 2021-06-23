@@ -21,7 +21,6 @@ class MatchInfoCommand extends Command {
         let channel = message.channel;
         let params = [channel.id, args.status, args.timeFrame].filter((val) => { if (!!val || val === 0){return true;} });
         let client = this.client;
-        message.delete();
         client.messageGenerator
             .getMatchInfoMessages(...params)
             .then(function(response){

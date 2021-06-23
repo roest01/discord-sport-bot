@@ -15,7 +15,6 @@ class TeamInfoCommand extends Command {
 
     exec(message, args) {
         let channel = message.channel;
-        //message.delete();
         this.client.messageGenerator
             .getTeamMessage(args.teamID)
             .then(function(message){

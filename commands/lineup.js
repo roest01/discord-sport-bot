@@ -18,7 +18,6 @@ class LineUpCommand extends Command {
 
     exec(message, args) {
         let channel = message.channel;
-        message.delete();
         this.client.messageGenerator
             .getLineUpMessage(args.matchID)
             .then(function(message){
